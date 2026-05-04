@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>词元之间 · 社群日报 | 温柔脉冲光标</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+        body {
+            background-color: #fbfaf8;
+            color: #1e1e2a;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark {
+            background-color: #121212;
+            color: #e8e2da;
+        }
+        body.dark .card {
+            background: #1e1e1e;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        body.dark .highlight {
+            background: #2a241e;
+            color: #f0cf9c;
+        }
+        body.dark .date-btn {
+            border-color: #3a322a;
+            color: #d4c9be;
+        }
+        body.dark .date-btn.active {
+            background: #5a4a3a;
+            color: #f0e2d0;
+            border-color: #b8854a;
+        }
+        body.dark .quote-card {
+            border-top-color: #2e2822;
+            border-bottom-color: #2e2822;
+        }
+        body.dark .summary-block {
+            background: #1f1b17;
+        }
+        body.dark .badge {
+            background: #2a241e;
+            color: #e2b87a;
+        }
+        body.dark .icon-btn {
+            border-color: #5a4a3a;
+            color: #e8e0d3;
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+        .archive-overlay {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100%;
+            background: rgba(30, 26, 22, 0.96);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            transition: right 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 2rem 1.5rem;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+            color: #ece3da;
+            overflow-y: auto;
+        }
+        body.dark .archive-overlay {
+            background: rgba(18, 18, 18, 0.98);
+        }
+        .archive-overlay.open {
+            right: 0;
+        }
+        .archive-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            border-bottom: 1px solid #ab8a64;
+            padding-bottom: 0.5rem;
+        }
+        .archive-close {
+            cursor: pointer;
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+        .archive-list {
+            list-style: none;
+        }
+        .archive-list li {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 1rem;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .archive-list li:hover {
+            background: rgba(226,184,122,0.2);
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .badge {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b97f3d;
+            background: #f3ede8;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            margin-bottom: 1.5rem;
+        }
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #2c2c38 0%, #7a5a3a 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .icon-btn {
+            background: none;
+            border: 1px solid #ddd0c2;
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: inherit;
+            touch-action: manipulation;
+        }
+        .date-nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 1rem 0 2rem;
+            flex-wrap: wrap;
+        }
+        .date-btn {
+            background: transparent;
+            border: 1px solid #e2d6cc;
+            padding: 0.5rem 1.4rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #4a3b2c;
+        }
+        .date-btn.active {
+            background: #e8dfd6;
+            border-color: #c9b18f;
+            color: #2f241b;
+        }
+        .quote-card {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 2.5rem auto;
+            padding: 1.5rem 1rem;
+            border-top: 1px solid #efe8e0;
+            border-bottom: 1px solid #efe8e0;
+        }
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-style: italic;
+            color: #30261e;
+        }
+        body.dark .quote-text {
+            color: #f0dfce;
+        }
+        .grid-three {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0 2rem;
+        }
+        @media (max-width: 900px) {
+            .grid-three { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 1.8rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02), 0 2px 5px rgba(0, 0, 0, 0.02);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.15);
+        }
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            border-left: 4px solid #e2b87a;
+            padding-left: 0.8rem;
+            transition: color 0.2s;
+        }
+        .card:hover .card-title {
+            color: #c27e3a;
+        }
+        .topic-block {
+            margin-bottom: 1.8rem;
+        }
+        .topic-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 0.4rem;
+            color: #c27e3a;
+        }
+        .highlight {
+            background: #fef5e8;
+            padding: 0.6rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            margin: 0.8rem 0;
+            border-left: 3px solid #e2b87a;
+        }
+        .knowledge-list { list-style: none; }
+        .knowledge-list li {
+            margin-bottom: 0.9rem;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: baseline;
+        }
+        .knowledge-list li::before {
+            content: "•";
+            color: #e2b87a;
+        }
+        .photo-upload-area {
+            margin-top: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #efe4da;
+        }
+        .upload-btn {
+            background: #f4ede6;
+            border: 1px solid #ddd0c2;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .preview-image {
+            max-width: 100%;
+            border-radius: 20px;
+            margin-top: 12px;
+            max-height: 180px;
+            object-fit: cover;
+        }
+        .summary-block {
+            text-align: center;
+            margin: 2rem 0 0;
+            padding: 1.2rem;
+            background: #faf7f2;
+            border-radius: 48px;
+            font-size: 0.95rem;
+        }
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #b7a68e;
+            border-top: 1px solid #efe8e0;
+            padding-top: 2rem;
+        }
+        @media (max-width: 768px) {
+            #cursor-canvas {
+                display: none;
+            }
+            * {
+                cursor: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="cursor-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;"></canvas>
+
+<div class="container">
+    <div class="toolbar">
+        <button id="darkModeToggle" class="icon-btn">🌙 深色模式</button>
+        <button id="archiveToggle" class="icon-btn">📅 归档</button>
+    </div>
+    <div class="hero">
+        <div class="badge">词元之间 · 社群共学</div>
+        <h1>社群日报</h1>
+        <div class="subhead" style="color: #5f5b53; margin-top: 0.5rem;">在对话与行动中，寻找真实连接</div>
+    </div>
+    <div class="date-nav" id="dateNav"></div>
+    <div class="quote-card" id="quoteCard"></div>
+    <div class="grid-three" id="dailyGrid"></div>
+    <div class="summary-block" id="summaryBlock"></div>
+    <footer>无穷的远方 · 无数的人们 · 都与我们有关</footer>
+</div>
+
+<div id="archivePanel" class="archive-overlay">
+    <div class="archive-header">
+        <span>📆 往期日报</span>
+        <span class="archive-close" id="closeArchive">&times;</span>
+    </div>
+    <ul class="archive-list" id="archiveList"></ul>
+</div>
+
+<script>
+    // ----- 日报数据（五月一日为测试数据，五月二日保留完整内容）-----
+    const dailyLibrary = {
+        "2026-05-01": {
+            date: "2026年5月1日",
+            quote: "这是测试数据。",
+            quoteAuthor: "词元之间",
+            topics: [
+                { title: "测试话题一", content: "<p>这是用于测试的讨论内容。你可以在这里添加任何示例文字。</p><div class='highlight'>高亮测试块。</div>" },
+                { title: "测试话题二", content: "<p>第二个测试话题，模拟群友讨论。</p>" },
+                { title: "测试话题三", content: "<p>第三个测试话题，确保布局完整。</p>" }
+            ],
+            knowledgeItems: ["📌 测试工具项 A", "📌 测试工具项 B", "📌 测试工具项 C"],
+            action: {
+                contributor: "@测试用户",
+                background: "这是一个测试背景。",
+                process: "测试过程描述。",
+                output: "测试产出内容。",
+                insights: "测试心得。",
+                imageDataURL: null
+            },
+            summary: "这是一段测试总结，用于验证日报切换功能。"
+        },
+        "2026-05-02": {
+            date: "2026年5月2日",
+            quote: "没有人是一座孤岛。",
+            quoteAuthor: "约翰·多恩",
+            topics: [
+                { title: "🧩 话题一：零基础靠AI做项目，捷径还是弯路？", content: "<p>大一经济学，讯飞API卡住，换GLM成功。<strong>试错成本昂贵，每一步误差都在翻倍</strong>。</p><div class='highlight'>AI是降本增效，但不是无中生有。要有足够认知语言才能驾驭AI。</div>" },
+                { title: "🌍 话题二：生产力爆炸之后，商业和经济学的前提还在吗？", content: "<p>激进猜想：20年内商业可能消失。经济学前提（资源有限、人类决策）正在被打破。讨论共产主义分领域实现：地铁已是准共产，能源若核聚变突破则接近无限。</p>" },
+                { title: "🤝 话题三：竞争文化与理性讨论", content: "<p>国人被竞争毒害，潜意识视为敌人，实则同胞。理性探讨、承认偏差是宝贵品质。关于职场尊重的争论最终以主动反思和共识收尾。</p>" }
+            ],
+            knowledgeItems: ["🤖 AI工具：豆包、DeepSeek，遇报错果断换提供商", "📺 博主「产品君」系列「一周AI大事」，抖音可看", "⚡ 可控核聚变21世纪内商用，叠加AI指数上升", "📖 读书建议：1/3兴趣，1/3专业，1/3杂书"],
+            action: {
+                contributor: "@ang-浙大经济学",
+                background: "大一经济学，一学期Python基础，两周时间",
+                process: "AI规划 → 讯飞不通 → 换GLM成功 → Streamlit调优 → 反复改提示词",
+                output: "像素风收集养成+打斗游戏，学会调用大模型API",
+                insights: "API就是程序里调大模型的接口；试错昂贵，跑通后理解深刻。",
+                imageDataURL: null
+            },
+            summary: "从AI真实试错成本聊到商业消亡、共产主义分领域实现的可能性，中间有关于职场尊重的争论与和解。未完成问题：生产力爆炸的受益者是谁？"
+        }
+    };
+
+    let currentDateKey = "2026-05-02";
+    let currentData = dailyLibrary[currentDateKey];
+
+    function loadImagesFromLocal() {
+        for (let key in dailyLibrary) {
+            const stored = localStorage.getItem(`word_daily_img_${key}`);
+            if (stored) dailyLibrary[key].action.imageDataURL = stored;
+        }
+    }
+    function saveImageToLocal(key, dataURL) {
+        localStorage.setItem(`word_daily_img_${key}`, dataURL);
+    }
+    function deleteImageFromLocal(key) {
+        localStorage.removeItem(`word_daily_img_${key}`);
+    }
+
+    function renderDaily() {
+        const quoteCard = document.getElementById('quoteCard');
+        quoteCard.innerHTML = `<div class="quote-text">“${currentData.quote}”</div><div class="quote-author" style="margin-top:0.5rem; font-size:0.85rem;">—— ${currentData.quoteAuthor}</div>`;
+
+        const topicsHtml = currentData.topics.map(t => `<div class="topic-block"><div class="topic-title">${t.title}</div><div class="topic-content">${t.content}</div></div>`).join('');
+        const knowledgeHtml = `<ul class="knowledge-list">${currentData.knowledgeItems.map(item => `<li>${item}</li>`).join('')}</ul>`;
+
+        const action = currentData.action;
+        const hasImage = action.imageDataURL && action.imageDataURL.length > 0;
+        const imageHtml = hasImage ? `
+            <div class="photo-upload-area">
+                <img src="${action.imageDataURL}" alt="项目记录" class="preview-image" />
+                <div><button class="delete-img" data-action="delete">🗑️ 删除照片</button></div>
+            </div>
+        ` : `
+            <div class="photo-upload-area">
+                <label class="upload-btn">📸 上传项目照片<input type="file" accept="image/*" class="image-file-input" style="display:none" /></label>
+            </div>
+        `;
+
+        const actionHtml = `
+            <div><span style="font-weight:700;">🎮 贡献者 ${action.contributor}</span></div>
+            <div style="margin-top: 0.6rem;"><strong>📌 背景</strong> ${action.background}</div>
+            <div><strong>⚙️ 过程</strong> ${action.process}</div>
+            <div><strong>✨ 产出</strong> ${action.output}</div>
+            <div><strong>💡 心得</strong> ${action.insights}</div>
+            ${imageHtml}
+        `;
+
+        const grid = document.getElementById('dailyGrid');
+        grid.innerHTML = `
+            <div class="card" data-card="0"><div class="card-title">🔥 讨论话题</div>${topicsHtml}</div>
+            <div class="card" data-card="1"><div class="card-title">📚 知识和工具分享</div>${knowledgeHtml}</div>
+            <div class="card" data-card="2"><div class="card-title">🛠️ 行动分享</div>${actionHtml}</div>
+        `;
+        document.getElementById('summaryBlock').innerHTML = `📌 一句话回顾 · ${currentData.summary}`;
+
+        if (!hasImage) {
+            const uploadBtn = document.querySelector('.upload-btn');
+            const fileInput = document.querySelector('.image-file-input');
+            if (uploadBtn && fileInput) {
+                uploadBtn.addEventListener('click', () => fileInput.click());
+                fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (!file || !file.type.startsWith('image/')) return;
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        currentData.action.imageDataURL = ev.target.result;
+                        saveImageToLocal(currentDateKey, ev.target.result);
+                        renderDaily();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        } else {
+            const delBtn = document.querySelector('.delete-img');
+            if (delBtn) delBtn.addEventListener('click', () => {
+                currentData.action.imageDataURL = null;
+                deleteImageFromLocal(currentDateKey);
+                renderDaily();
+            });
+        }
+
+        const cards = document.querySelectorAll('.card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        cards.forEach(card => observer.observe(card));
+        cards.forEach(card => {
+            if (card.getBoundingClientRect().top < window.innerHeight - 80) card.classList.add('revealed');
+        });
+    }
+
+    function buildDateNav() {
+        const nav = document.getElementById('dateNav');
+        const archiveList = document.getElementById('archiveList');
+        nav.innerHTML = '';
+        archiveList.innerHTML = '';
+        const sortedKeys = Object.keys(dailyLibrary).sort().reverse();
+        sortedKeys.forEach(key => {
+            const btn = document.createElement('button');
+            btn.textContent = dailyLibrary[key].date;
+            btn.className = `date-btn ${key === currentDateKey ? 'active' : ''}`;
+            btn.addEventListener('click', () => {
+                currentDateKey = key;
+                currentData = dailyLibrary[key];
+                buildDateNav();
+                renderDaily();
+                window.scrollTo({ top: document.querySelector('.hero').offsetTop - 20, behavior: 'smooth' });
+            });
+            nav.appendChild(btn);
+            const li = document.createElement('li');
+            li.textContent = dailyLibrary[key].date;
+            li.style.cursor = 'pointer';
+            li.addEventListener('click', () => {
+                currentDateKey = key;
+                currentData = dailyLibrary[key];
+                buildDateNav();
+                renderDaily();
+                document.getElementById('archivePanel').classList.remove('open');
+                window.scrollTo({ top: document.querySelector('.hero').offsetTop - 20, behavior: 'smooth' });
+            });
+            archiveList.appendChild(li);
+        });
+    }
+
+    function initDarkMode() {
+        const toggle = document.getElementById('darkModeToggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDark) document.body.classList.add('dark');
+        const applyDark = (isDark) => {
+            if (isDark) document.body.classList.add('dark');
+            else document.body.classList.remove('dark');
+            toggle.textContent = isDark ? '☀️ 浅色模式' : '🌙 深色模式';
+        };
+        applyDark(document.body.classList.contains('dark'));
+        toggle.addEventListener('click', () => {
+            const nowDark = document.body.classList.contains('dark');
+            applyDark(!nowDark);
+        });
+        toggle.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const nowDark = document.body.classList.contains('dark');
+            applyDark(!nowDark);
+        });
+    }
+
+    function initArchive() {
+        const openBtn = document.getElementById('archiveToggle');
+        const panel = document.getElementById('archivePanel');
+        const closeBtn = document.getElementById('closeArchive');
+        openBtn.addEventListener('click', () => panel.classList.add('open'));
+        closeBtn.addEventListener('click', () => panel.classList.remove('open'));
+        window.addEventListener('click', (e) => {
+            if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== openBtn && !openBtn.contains(e.target)) {
+                panel.classList.remove('open');
+            }
+        });
+        if (openBtn) openBtn.addEventListener('touchstart', (e) => { e.preventDefault(); panel.classList.add('open'); });
+        if (closeBtn) closeBtn.addEventListener('touchstart', (e) => { e.preventDefault(); panel.classList.remove('open'); });
+    }
+
+    // ========== 温柔脉冲光标（方案二·优化尾缀）==========
+    class GentlePulseCursor {
+        constructor(canvasId) {
+            this.canvas = document.getElementById(canvasId);
+            if (!this.canvas) return;
+            this.ctx = this.canvas.getContext('2d');
+            this.particles = [];
+            this.mouseX = window.innerWidth / 2;
+            this.mouseY = window.innerHeight / 2;
+            this.lastX = this.mouseX;
+            this.lastY = this.mouseY;
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
+            this.resize();
+            this.pulsePhase = 0;
+            this.init();
+        }
+        resize() {
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
+        }
+        init() {
+            window.addEventListener('resize', () => this.resize());
+            window.addEventListener('mousemove', (e) => {
+                this.lastX = this.mouseX;
+                this.lastY = this.mouseY;
+                this.mouseX = e.clientX;
+                this.mouseY = e.clientY;
+                this.addWakeParticles();
+            });
+            this.animate();
+        }
+        addWakeParticles() {
+            const dx = this.mouseX - this.lastX;
+            const dy = this.mouseY - this.lastY;
+            const speed = Math.hypot(dx, dy);
+            if (speed < 0.8) return;
+            const len = Math.hypot(dx, dy);
+            const dirX = dx / len;
+            const dirY = dy / len;
+            const tailX = -dirX;
+            const tailY = -dirY;
+            const count = Math.min(2, Math.floor(speed / 4) + 1);
+            for (let i = 0; i < count; i++) {
+                const angleVar = (Math.random() - 0.5) * 1.0;
+                const vx = tailX * (0.8 + Math.random() * 1.2) + (Math.random() - 0.5) * 0.6;
+                const vy = tailY * (0.8 + Math.random() * 1.2) + (Math.random() - 0.5) * 0.6;
+                this.particles.push({
+                    x: this.mouseX - dx * 0.2,
+                    y: this.mouseY - dy * 0.2,
+                    vx: vx,
+                    vy: vy,
+                    life: 0.6 + Math.random() * 0.3,
+                    size: 2.5 + Math.random() * 4,
+                    color: `hsla(${35 + Math.random() * 15}, 70%, 65%, ${0.35 + Math.random() * 0.4})`
+                });
+            }
+            if (this.particles.length > 70) this.particles.splice(0, 30);
+        }
+        getPulseFactor() {
+            this.pulsePhase += 0.008;
+            const t = this.pulsePhase % (Math.PI * 2);
+            const sinVal = (Math.sin(t) + 1) / 2;
+            let factor;
+            if (sinVal < 0.5) {
+                factor = Math.pow(sinVal * 2, 1.3) * 0.75;
+            } else {
+                factor = 0.75 + (1 - Math.pow((sinVal - 0.5) * 2, 0.7)) * 0.25;
+            }
+            return Math.min(0.85, factor);
+        }
+        drawRings() {
+            const pulse = this.getPulseFactor();
+            const r1 = 9 + pulse * 7;
+            const r2 = 9 + pulse * 5;
+            const r3 = 9 + pulse * 3;
+            const op1 = 0.22 + pulse * 0.22;
+            const op2 = 0.12 + pulse * 0.18;
+            const op3 = 0.08 + pulse * 0.12;
+            this.ctx.save();
+            this.ctx.shadowBlur = 0;
+            this.ctx.beginPath();
+            this.ctx.arc(this.mouseX, this.mouseY, r1, 0, Math.PI*2);
+            this.ctx.strokeStyle = `rgba(226, 184, 122, ${op1})`;
+            this.ctx.lineWidth = 1.0;
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.arc(this.mouseX, this.mouseY, r2, 0, Math.PI*2);
+            this.ctx.strokeStyle = `rgba(226, 184, 122, ${op2})`;
+            this.ctx.lineWidth = 0.8;
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.arc(this.mouseX, this.mouseY, r3, 0, Math.PI*2);
+            this.ctx.strokeStyle = `rgba(245, 200, 130, ${op3})`;
+            this.ctx.lineWidth = 0.6;
+            this.ctx.stroke();
+            this.ctx.restore();
+        }
+        updateParticles() {
+            for (let i=0; i<this.particles.length; i++) {
+                const p = this.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.01;
+                p.size *= 0.99;
+                if (p.life <= 0.02 || p.x < -50 || p.x > this.width+50 || p.y < -50 || p.y > this.height+50) {
+                    this.particles.splice(i,1);
+                    i--;
+                    continue;
+                }
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI*2);
+                this.ctx.fillStyle = p.color;
+                this.ctx.fill();
+                this.ctx.shadowBlur = 3;
+                this.ctx.shadowColor = "#e2b87a";
+                this.ctx.fill();
+            }
+            this.ctx.shadowBlur = 0;
+        }
+        animate() {
+            if (!this.ctx) return;
+            this.ctx.clearRect(0, 0, this.width, this.height);
+            this.drawRings();
+            this.updateParticles();
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+
+    if (window.innerWidth > 768) {
+        new GentlePulseCursor('cursor-canvas');
+    } else {
+        document.body.style.cursor = 'auto';
+    }
+
+    loadImagesFromLocal();
+    currentData = dailyLibrary[currentDateKey];
+    buildDateNav();
+    renderDaily();
+    initDarkMode();
+    initArchive();
+</script>
+</body>
+</html>
