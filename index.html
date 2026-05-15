@@ -6,9 +6,10 @@
   <title>像素地牢突击 · 元气风 Roguelite</title>
   <style>
     :root {
-      --bg: #111827;
-      --panel: rgba(15, 23, 42, 0.88);
+      --bg: #0b1020;
+      --panel: rgba(17, 24, 39, 0.9);
       --panel-strong: #172033;
+      --panel-edge: #3b4d6d;
       --gold: #ffd166;
       --mint: #6ee7b7;
       --cyan: #67e8f9;
@@ -18,6 +19,7 @@
       --muted: #9fb0c8;
       --danger: #ef4444;
       --tile: 32px;
+      --pixel-shadow: 0 0 0 2px #0b1020, 0 8px 0 #060914, 0 18px 34px rgba(0, 0, 0, 0.38);
       font-family: "Trebuchet MS", "Microsoft YaHei", system-ui, sans-serif;
     }
 
@@ -29,9 +31,13 @@
       overflow: hidden;
       color: var(--ink);
       background:
-        radial-gradient(circle at 20% 15%, rgba(103, 232, 249, 0.24), transparent 25%),
-        radial-gradient(circle at 80% 10%, rgba(251, 113, 133, 0.18), transparent 28%),
-        linear-gradient(135deg, #0f172a 0%, #111827 52%, #1e1b4b 100%);
+        linear-gradient(rgba(255,255,255,0.035) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 2px, transparent 2px),
+        radial-gradient(circle at 18% 14%, rgba(103, 232, 249, 0.26), transparent 24%),
+        radial-gradient(circle at 82% 8%, rgba(251, 113, 133, 0.18), transparent 27%),
+        radial-gradient(circle at 50% 95%, rgba(167, 139, 250, 0.22), transparent 30%),
+        linear-gradient(135deg, #070b16 0%, #101827 52%, #221a4f 100%);
+      background-size: 24px 24px, 24px 24px, auto, auto, auto, auto;
       image-rendering: pixelated;
     }
 
@@ -46,10 +52,12 @@
     .panel {
       position: relative;
       overflow: hidden;
-      border: 4px solid #243047;
-      border-radius: 24px;
-      background: var(--panel);
-      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.38), inset 0 0 0 2px rgba(255,255,255,0.04);
+      border: 4px solid var(--panel-edge);
+      border-radius: 10px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.06), transparent 28%),
+        var(--panel);
+      box-shadow: var(--pixel-shadow), inset 0 0 0 2px rgba(255,255,255,0.04);
     }
 
     .panel::before {
@@ -66,6 +74,7 @@
 
     .side {
       padding: 22px;
+      overflow-y: auto;
     }
 
     .brand {
@@ -81,9 +90,11 @@
       display: grid;
       place-items: center;
       border: 4px solid #0f172a;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--gold), #f97316);
-      box-shadow: 0 8px 0 #6b3411;
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.45), transparent 30%),
+        linear-gradient(135deg, var(--gold), #f97316);
+      box-shadow: 0 6px 0 #6b3411, 0 0 0 2px #fef3c7 inset;
       font-size: 32px;
     }
 
@@ -101,6 +112,65 @@
       color: var(--muted);
       font-size: 13px;
     }
+
+
+
+    .hero-card {
+      display: grid;
+      grid-template-columns: 76px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 3px solid #31425f;
+      border-radius: 8px;
+      background: rgba(5, 8, 20, 0.54);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.04);
+    }
+
+    .portrait {
+      width: 72px;
+      height: 72px;
+      position: relative;
+      border: 4px solid #0f172a;
+      border-radius: 6px;
+      background:
+        linear-gradient(#fcd34d 0 22px, #f59e0b 22px 28px, transparent 28px),
+        linear-gradient(90deg, transparent 0 14px, #38bdf8 14px 58px, transparent 58px),
+        linear-gradient(#f8fafc 0 44px, #334155 44px 100%);
+      box-shadow: 0 5px 0 #020617, inset 0 0 0 3px rgba(255,255,255,0.15);
+    }
+
+    .portrait::before, .portrait::after {
+      content: "";
+      position: absolute;
+      background: #0f172a;
+    }
+
+    .portrait::before { width: 8px; height: 8px; left: 22px; top: 31px; box-shadow: 20px 0 #0f172a; }
+    .portrait::after { width: 22px; height: 5px; left: 24px; top: 48px; background: #ef4444; }
+
+    .hero-title { color: var(--gold); font-weight: 900; letter-spacing: 1px; }
+    .hero-subtitle { margin-top: 3px; color: var(--muted); font-size: 12px; }
+
+    .ability-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .ability-btn {
+      padding: 8px 10px;
+      border: 2px solid #455a7a;
+      border-radius: 6px;
+      color: #e0f2fe;
+      background: linear-gradient(180deg, #26344f, #111827);
+      box-shadow: 0 4px 0 #020617;
+      font-size: 12px;
+    }
+
+    .ability-btn.ready { border-color: var(--mint); color: #dcfce7; }
+    .ability-btn.cooldown { filter: grayscale(0.8); opacity: 0.64; }
 
     .stat-grid {
       display: grid;
@@ -157,9 +227,12 @@
     .card {
       margin-top: 16px;
       padding: 16px;
-      border: 3px solid #26344f;
-      border-radius: 18px;
-      background: rgba(8, 13, 27, 0.68);
+      border: 3px solid #31425f;
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06), transparent 38%),
+        rgba(8, 13, 27, 0.72);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.035), 0 5px 0 #050814;
     }
 
     .card h2 {
@@ -200,10 +273,10 @@
       width: min(100%, 960px);
       aspect-ratio: 16 / 10;
       border: 6px solid #0f172a;
-      border-radius: 22px;
+      border-radius: 10px;
       overflow: hidden;
       background: #111827;
-      box-shadow: 0 14px 0 #060914, 0 28px 60px rgba(0,0,0,0.45);
+      box-shadow: 0 0 0 3px #53637f, 0 14px 0 #060914, 0 28px 60px rgba(0,0,0,0.45);
     }
 
     canvas {
@@ -340,6 +413,100 @@
     .weapon-name { color: var(--cyan); font-weight: 900; }
     .mobile-pad { display: none; }
 
+    .canvas-hud {
+      position: absolute;
+      inset: 14px 14px auto 14px;
+      z-index: 4;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .hud-chip, .objective-chip {
+      border: 3px solid #0f172a;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #f8fafc;
+      background: rgba(15, 23, 42, 0.78);
+      box-shadow: 0 4px 0 rgba(2, 6, 23, 0.82), inset 0 0 0 2px rgba(255,255,255,0.04);
+      text-shadow: 2px 2px 0 #020617;
+    }
+
+    .hud-chip strong { color: var(--gold); }
+    .objective-chip { max-width: 340px; color: #dbeafe; }
+
+    .interaction-card {
+      border-color: #4c3b72;
+      background:
+        linear-gradient(135deg, rgba(167,139,250,0.16), transparent 50%),
+        rgba(8, 13, 27, 0.74);
+    }
+
+    .objective-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+      color: #dbeafe;
+      font-size: 13px;
+    }
+
+    .objective-list span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border: 2px solid #26344f;
+      border-radius: 6px;
+      background: rgba(2, 6, 23, 0.42);
+    }
+
+    .weapon-rack {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .weapon-card {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px;
+      border: 2px solid #2d3b58;
+      border-radius: 6px;
+      color: var(--ink);
+      background: rgba(2, 6, 23, 0.45);
+      box-shadow: 0 3px 0 #020617;
+      text-align: left;
+    }
+
+    .weapon-card.active {
+      border-color: var(--gold);
+      background: linear-gradient(90deg, rgba(255,209,102,0.22), rgba(2,6,23,0.55));
+    }
+
+    .weapon-pixel {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 2px solid #0f172a;
+      border-radius: 5px;
+      background: #1e293b;
+    }
+
+    .weapon-meta b { display: block; color: #f8fafc; font-size: 12px; }
+    .weapon-meta small { color: var(--muted); font-size: 11px; }
+    .weapon-cost { color: var(--cyan); font-size: 11px; font-weight: 900; }
+
+    .log p:first-child {
+      border-left-color: var(--gold);
+      background: rgba(255,209,102,0.12);
+    }
+
+
     @media (max-width: 1100px) {
       body { overflow: auto; }
       .app {
@@ -395,6 +562,18 @@
         </div>
       </div>
 
+      <section class="hero-card">
+        <div class="portrait" aria-hidden="true"></div>
+        <div>
+          <p class="hero-title">游侠 · 蓝焰</p>
+          <p class="hero-subtitle">点击技能按钮也能操作，战斗中会实时反馈状态。</p>
+          <div class="ability-row">
+            <button class="ability-btn ready" id="dashBtn">⚡ 冲刺</button>
+            <button class="ability-btn ready" id="healBtn">🧪 应急补给</button>
+          </div>
+        </div>
+      </section>
+
       <div class="meter-label"><span>生命</span><strong id="hpText">100 / 100</strong></div>
       <div class="bar-wrap"><div id="hpBar" class="bar"></div></div>
       <div class="meter-label"><span>能量</span><strong id="energyText">80 / 80</strong></div>
@@ -411,6 +590,7 @@
         <h2>当前武器</h2>
         <p><span id="weaponName" class="weapon-name">星尘手枪</span></p>
         <p id="weaponDesc" class="tagline">均衡射速，适合清理小怪。</p>
+        <div class="weapon-rack" id="weaponRack"></div>
       </section>
 
       <section class="card">
@@ -425,6 +605,10 @@
 
     <section class="panel game-shell">
       <div class="canvas-frame" id="frame">
+        <div class="canvas-hud">
+          <div class="hud-chip">房间 <strong id="roomChip">1-1</strong></div>
+          <div class="objective-chip" id="objectiveChip">清理怪物，收集金币，寻找传送门</div>
+        </div>
         <canvas id="game" width="960" height="600" aria-label="像素地牢突击游戏画布"></canvas>
         <div id="overlay" class="overlay">
           <div class="modal">
@@ -445,7 +629,16 @@
     </section>
 
     <aside class="panel side right-panel">
-      <section class="card" style="margin-top:0">
+      <section class="card interaction-card" style="margin-top:0">
+        <h2>互动目标</h2>
+        <div class="objective-list">
+          <span id="objectiveText">🎯 击败本房间所有怪物</span>
+          <span id="threatText">⚠️ 威胁等级：低</span>
+          <span>🛒 点击商店卡片购买祝福</span>
+        </div>
+      </section>
+
+      <section class="card">
         <h2>地牢地图</h2>
         <div class="mini-map" id="miniMap"></div>
         <p class="tagline">清空房间后进入传送门。第 5 间会出现 Boss。</p>
@@ -466,6 +659,7 @@
   <script>
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
     const frame = document.getElementById('frame');
     const overlay = document.getElementById('overlay');
     const overlayTitle = document.getElementById('overlayTitle');
@@ -478,7 +672,11 @@
       coinText: document.getElementById('coinText'), levelText: document.getElementById('levelText'),
       killText: document.getElementById('killText'), comboText: document.getElementById('comboText'),
       weaponName: document.getElementById('weaponName'), weaponDesc: document.getElementById('weaponDesc'),
-      shopGrid: document.getElementById('shopGrid'), miniMap: document.getElementById('miniMap'), log: document.getElementById('log')
+      weaponRack: document.getElementById('weaponRack'), roomChip: document.getElementById('roomChip'),
+      objectiveChip: document.getElementById('objectiveChip'), objectiveText: document.getElementById('objectiveText'),
+      threatText: document.getElementById('threatText'), dashBtn: document.getElementById('dashBtn'),
+      healBtn: document.getElementById('healBtn'), shopGrid: document.getElementById('shopGrid'),
+      miniMap: document.getElementById('miniMap'), log: document.getElementById('log')
     };
 
     const W = canvas.width;
@@ -490,9 +688,9 @@
     let rafId = 0;
 
     const weapons = [
-      { name: '星尘手枪', desc: '均衡射速，适合清理小怪。', damage: 16, speed: 590, rate: 210, cost: 7, spread: 0.04, pellets: 1, color: '#67e8f9' },
-      { name: '胡萝卜散弹', desc: '近距离多弹丸，清房很爽。', damage: 9, speed: 520, rate: 430, cost: 12, spread: 0.28, pellets: 5, color: '#fb923c' },
-      { name: '霜糖法杖', desc: '高伤害慢弹，附带穿透感。', damage: 28, speed: 430, rate: 520, cost: 15, spread: 0.02, pellets: 1, color: '#a78bfa' }
+      { icon: '✦', name: '星尘手枪', desc: '均衡射速，适合清理小怪。', damage: 16, speed: 590, rate: 210, cost: 7, spread: 0.04, pellets: 1, color: '#67e8f9' },
+      { icon: '✹', name: '胡萝卜散弹', desc: '近距离多弹丸，清房很爽。', damage: 9, speed: 520, rate: 430, cost: 12, spread: 0.28, pellets: 5, color: '#fb923c' },
+      { icon: '◆', name: '霜糖法杖', desc: '高伤害慢弹，附带穿透感。', damage: 28, speed: 430, rate: 520, cost: 15, spread: 0.02, pellets: 1, color: '#a78bfa' }
     ];
 
     const blessings = [
@@ -515,18 +713,20 @@
       enemyBullets: [],
       enemies: [],
       particles: [],
+      floaters: [],
       pickups: [],
       props: [],
       shop: [],
       weaponIndex: 0,
+      healCd: 0,
       roomsClear: new Set()
     };
 
     function resetGame() {
       Object.assign(state, {
         room: 1, kills: 0, combo: 0, coins: 0, cameraShake: 0, portal: null, roomClear: false,
-        bullets: [], enemyBullets: [], enemies: [], particles: [], pickups: [], props: [], shop: [], weaponIndex: 0,
-        roomsClear: new Set()
+        bullets: [], enemyBullets: [], enemies: [], particles: [], floaters: [], pickups: [], props: [], shop: [], weaponIndex: 0,
+        healCd: 0, roomsClear: new Set()
       });
       state.player = {
         x: W / 2, y: H / 2, r: 15, hp: 100, maxHp: 100, energy: 80, maxEnergy: 80,
@@ -535,6 +735,7 @@
       addLog('你在霓虹地牢入口醒来，武器已上膛。');
       buildRoom();
       refreshShop();
+      renderWeaponRack();
       updateUI();
     }
 
@@ -543,6 +744,7 @@
       state.enemyBullets.length = 0;
       state.enemies.length = 0;
       state.particles.length = 0;
+      state.floaters.length = 0;
       state.pickups.length = 0;
       state.props.length = 0;
       state.portal = null;
@@ -603,6 +805,25 @@
       });
     }
 
+    function renderWeaponRack() {
+      ui.weaponRack.innerHTML = '';
+      weapons.forEach((weapon, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `weapon-card${idx === state.weaponIndex ? ' active' : ''}`;
+        btn.innerHTML = `<span class="weapon-pixel" style="color:${weapon.color}">${weapon.icon}</span><span class="weapon-meta"><b>${weapon.name}</b><small>${weapon.pellets} 弹丸 · ${weapon.cost} 能量</small></span><span class="weapon-cost">切换</span>`;
+        btn.addEventListener('click', () => switchWeapon(idx));
+        ui.weaponRack.appendChild(btn);
+      });
+    }
+
+    function switchWeapon(idx) {
+      if (idx === state.weaponIndex) return;
+      state.weaponIndex = idx;
+      addLog(`切换武器：${weapons[idx].name}`);
+      renderWeaponRack();
+      updateUI();
+    }
+
     function buy(idx) {
       const item = state.shop[idx];
       if (!item || state.coins < item.price) {
@@ -610,8 +831,10 @@
         return;
       }
       state.coins -= item.price;
-      if (item.weapon) state.weaponIndex = (state.weaponIndex + 1) % weapons.length;
-      else item.apply(state);
+      if (item.weapon) {
+        state.weaponIndex = (state.weaponIndex + 1) % weapons.length;
+        renderWeaponRack();
+      } else item.apply(state);
       addLog(`购买成功：${item.title}`);
       state.shop.splice(idx, 1);
       renderShop();
@@ -624,6 +847,7 @@
       p.shootCd -= dt;
       p.invuln -= dt;
       p.dash -= dt;
+      state.healCd = Math.max(0, state.healCd - dt);
       p.energy = Math.min(p.maxEnergy, p.energy + p.energyRegen * dt / 1000);
 
       let dx = 0, dy = 0;
@@ -643,6 +867,7 @@
       updateEnemies(dt);
       updatePickups(dt);
       updateParticles(dt);
+      updateFloaters(dt);
 
       if (!state.roomClear && state.enemies.length === 0) clearRoom();
       if (state.portal && dist(p, state.portal) < 42 && state.room < 5) nextRoom();
@@ -676,8 +901,24 @@
         p.invuln = 260;
         state.cameraShake = 5;
         burst(p.x, p.y, '#ffffff', 12, 2.2);
+        floatText('闪避!', p.x, p.y - 28, '#e0f2fe');
       }
       keys.delete('shift');
+    }
+
+    function quickHeal() {
+      const p = state.player;
+      if (!running || state.healCd > 0 || p.energy < 25 || p.hp >= p.maxHp) {
+        addLog('应急补给暂时不可用：需要能量、冷却或受伤状态。');
+        return;
+      }
+      p.energy -= 25;
+      p.hp = Math.min(p.maxHp, p.hp + 32);
+      state.healCd = 7000;
+      burst(p.x, p.y, '#6ee7b7', 24, 1.8);
+      floatText('+32', p.x, p.y - 34, '#bbf7d0');
+      addLog('使用应急补给，恢复 32 生命。');
+      updateUI();
     }
 
     function updateBullets(dt) {
@@ -689,6 +930,7 @@
           if (dist(b, e) < b.r + e.r) {
             e.hp -= b.damage;
             b.life = 0;
+            floatText(`-${Math.round(b.damage)}`, e.x, e.y - e.r - 8, '#fde68a');
             burst(b.x, b.y, e.color, 8, 1.7);
             state.cameraShake = Math.max(state.cameraShake, 3);
             if (e.hp <= 0) killEnemy(e);
@@ -755,6 +997,7 @@
       if (p.invuln > 0) return;
       p.hp -= amount;
       p.invuln = 620;
+      floatText(`-${amount}`, p.x, p.y - 30, '#fecaca');
       p.combo = 0;
       state.combo = 0;
       state.cameraShake = 10;
@@ -788,6 +1031,14 @@
       }
       state.particles = state.particles.filter(p => p.life > 0 && p.size > 0.4);
       state.cameraShake *= 0.9;
+    }
+
+    function updateFloaters(dt) {
+      for (const f of state.floaters) {
+        f.y -= 34 * dt / 1000;
+        f.life -= dt;
+      }
+      state.floaters = state.floaters.filter(f => f.life > 0);
     }
 
     function clearRoom() {
@@ -842,23 +1093,36 @@
       state.enemyBullets.forEach(b => drawCircle(b.x, b.y, b.r, b.color, '#fee2e2'));
       state.enemies.forEach(drawEnemy);
       drawPlayer();
+      drawCrosshair();
       state.particles.forEach(p => drawRect(p.x, p.y, p.size, p.color));
+      state.floaters.forEach(drawFloatingText);
       ctx.restore();
     }
 
     function drawDungeon() {
-      ctx.fillStyle = '#111827';
+      ctx.fillStyle = '#101827';
       ctx.fillRect(0, 0, W, H);
       for (let y = 32; y < H - 32; y += 32) {
         for (let x = 32; x < W - 32; x += 32) {
-          ctx.fillStyle = (x / 32 + y / 32) % 2 ? '#182238' : '#151f33';
+          const variant = (x / 32 * 3 + y / 32 * 5 + state.room) % 4;
+          ctx.fillStyle = variant === 0 ? '#18233a' : variant === 1 ? '#162034' : variant === 2 ? '#1b2942' : '#141e32';
           ctx.fillRect(x, y, 32, 32);
-          ctx.fillStyle = 'rgba(255,255,255,0.035)';
-          ctx.fillRect(x, y, 2, 32);
-          ctx.fillRect(x, y, 32, 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.04)';
+          ctx.fillRect(x + 2, y + 2, 4, 4);
+          ctx.fillStyle = 'rgba(2,6,23,0.32)';
+          ctx.fillRect(x, y + 30, 32, 2);
+          ctx.fillRect(x + 30, y, 2, 32);
         }
       }
-      ctx.strokeStyle = '#334155';
+      ctx.fillStyle = 'rgba(167,139,250,0.12)';
+      ctx.fillRect(W / 2 - 96, 60, 192, 24);
+      ctx.fillRect(W / 2 - 96, H - 84, 192, 24);
+      ctx.fillStyle = 'rgba(255,209,102,0.18)';
+      ctx.fillRect(88, 88, 20, 20);
+      ctx.fillRect(W - 108, 88, 20, 20);
+      ctx.fillRect(88, H - 108, 20, 20);
+      ctx.fillRect(W - 108, H - 108, 20, 20);
+      ctx.strokeStyle = '#4b5f82';
       ctx.lineWidth = 18;
       ctx.strokeRect(30, 30, W - 60, H - 60);
       ctx.strokeStyle = '#0f172a';
@@ -875,35 +1139,57 @@
       if (flicker) return;
       const angle = Math.atan2(mouse.y - p.y, mouse.x - p.x);
       ctx.save();
-      ctx.translate(p.x, p.y);
+      ctx.translate(Math.round(p.x), Math.round(p.y));
       ctx.rotate(angle);
-      drawCircle(0, 0, p.r + 7, '#0f172a');
-      drawCircle(0, 0, p.r + 2, '#fbbf24');
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(-17, -17, 34, 34);
+      ctx.fillStyle = '#fbbf24';
+      ctx.fillRect(-14, -14, 28, 28);
+      ctx.fillStyle = '#fde68a';
+      ctx.fillRect(-10, -10, 20, 8);
       ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(8, -6, 28, 12);
-      ctx.fillStyle = '#e0f2fe';
-      ctx.fillRect(20, -3, 15, 6);
+      ctx.fillRect(-12, -1, 24, 17);
       ctx.fillStyle = '#0f172a';
-      ctx.fillRect(-4, -5, 5, 5);
+      ctx.fillRect(1, -7, 5, 5);
+      ctx.fillStyle = weapons[state.weaponIndex].color;
+      ctx.fillRect(9, -5, 31, 10);
+      ctx.fillStyle = '#e0f2fe';
+      ctx.fillRect(28, -2, 14, 4);
+      if (p.dash > 0) {
+        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+        ctx.fillRect(-30, -9, 10, 18);
+      }
       ctx.restore();
     }
 
     function drawEnemy(e) {
-      drawCircle(e.x, e.y, e.r + 5, '#0f172a');
-      drawCircle(e.x, e.y, e.r, e.color);
-      ctx.fillStyle = '#111827';
-      ctx.fillRect(e.x - e.r * 0.45, e.y - 3, 5, 5);
-      ctx.fillRect(e.x + e.r * 0.2, e.y - 3, 5, 5);
-      const w = e.r * 2;
+      const x = Math.round(e.x);
+      const y = Math.round(e.y);
+      const size = e.type === 'boss' ? 56 : e.type === 'mage' ? 32 : 28;
       ctx.fillStyle = '#020617';
-      ctx.fillRect(e.x - w / 2, e.y - e.r - 14, w, 5);
-      ctx.fillStyle = '#ef4444';
-      ctx.fillRect(e.x - w / 2, e.y - e.r - 14, w * (e.hp / e.maxHp), 5);
-      if (e.type === 'boss') {
-        ctx.strokeStyle = '#fff7ed';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(e.x - 16, e.y - 48, 32, 16);
+      ctx.fillRect(x - size / 2 - 4, y - size / 2 + 4, size + 8, size + 8);
+      ctx.fillStyle = e.color;
+      ctx.fillRect(x - size / 2, y - size / 2, size, size);
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.fillRect(x - size / 2 + 5, y - size / 2 + 5, size - 10, 5);
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(x - size * 0.22, y - 4, 6, 6);
+      ctx.fillRect(x + size * 0.12, y - 4, 6, 6);
+      if (e.type === 'mage') {
+        ctx.fillStyle = '#fef3c7';
+        ctx.fillRect(x - 6, y - size / 2 - 10, 12, 10);
       }
+      if (e.type === 'boss') {
+        ctx.fillStyle = '#fff7ed';
+        ctx.fillRect(x - 18, y - 42, 36, 10);
+        ctx.fillStyle = '#7f1d1d';
+        ctx.fillRect(x - 10, y - 40, 20, 6);
+      }
+      const w = size;
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(x - w / 2, y - size / 2 - 12, w, 5);
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(x - w / 2, y - size / 2 - 12, w * Math.max(0, e.hp / e.maxHp), 5);
     }
 
     function drawProp(p) {
@@ -934,6 +1220,40 @@
         ctx.stroke();
       }
       drawCircle(portal.x, portal.y, 14, '#67e8f9', '#ecfeff');
+    }
+
+    function drawCrosshair() {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(224,242,254,0.82)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(mouse.x - 13, mouse.y);
+      ctx.lineTo(mouse.x - 5, mouse.y);
+      ctx.moveTo(mouse.x + 5, mouse.y);
+      ctx.lineTo(mouse.x + 13, mouse.y);
+      ctx.moveTo(mouse.x, mouse.y - 13);
+      ctx.lineTo(mouse.x, mouse.y - 5);
+      ctx.moveTo(mouse.x, mouse.y + 5);
+      ctx.lineTo(mouse.x, mouse.y + 13);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function floatText(text, x, y, color) {
+      state.floaters.push({ text, x, y, color, life: 720 });
+    }
+
+    function drawFloatingText(f) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, f.life / 720);
+      ctx.font = 'bold 16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#020617';
+      ctx.strokeText(f.text, f.x, f.y);
+      ctx.fillStyle = f.color;
+      ctx.fillText(f.text, f.x, f.y);
+      ctx.restore();
     }
 
     function drawCircle(x, y, r, fill, stroke) {
@@ -974,10 +1294,18 @@
       ui.energyBar.style.width = `${clamp(p.energy / p.maxEnergy * 100, 0, 100)}%`;
       ui.coinText.textContent = state.coins;
       ui.levelText.textContent = `1-${state.room}`;
+      ui.roomChip.textContent = `1-${state.room}`;
       ui.killText.textContent = state.kills;
       ui.comboText.textContent = state.combo;
       ui.weaponName.textContent = weapons[state.weaponIndex].name;
       ui.weaponDesc.textContent = weapons[state.weaponIndex].desc;
+      const remaining = state.enemies.length;
+      ui.objectiveText.textContent = state.roomClear ? '✅ 传送门已开启，进入下一间房' : `🎯 剩余敌人：${remaining}`;
+      ui.objectiveChip.textContent = state.roomClear ? '传送门开启！靠近蓝色核心进入下一房间' : `目标：清理房间 · 剩余 ${remaining} 个敌人`;
+      ui.threatText.textContent = `⚠️ 威胁等级：${state.room === 5 ? 'Boss' : remaining > 6 ? '高' : remaining > 2 ? '中' : '低'}`;
+      ui.dashBtn.className = `ability-btn ${p.energy >= 14 ? 'ready' : 'cooldown'}`;
+      ui.healBtn.className = `ability-btn ${state.healCd <= 0 && p.energy >= 25 && p.hp < p.maxHp ? 'ready' : 'cooldown'}`;
+      ui.healBtn.textContent = state.healCd > 0 ? `🧪 ${Math.ceil(state.healCd / 1000)}s` : '🧪 应急补给';
     }
 
     function updateMap() {
@@ -1035,6 +1363,8 @@
     document.querySelector('[data-fire]').addEventListener('touchstart', e => { e.preventDefault(); mouse.down = true; });
     document.querySelector('[data-fire]').addEventListener('touchend', e => { e.preventDefault(); mouse.down = false; });
     document.querySelector('[data-dash]').addEventListener('touchstart', e => { e.preventDefault(); keys.add('shift'); });
+    ui.dashBtn.addEventListener('click', dash);
+    ui.healBtn.addEventListener('click', quickHeal);
 
     startBtn.addEventListener('click', start);
     resetGame();
